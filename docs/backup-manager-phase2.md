@@ -79,3 +79,7 @@ Nếu đích đã có nội dung, review và giữ bản cũ trước khi thay. 
 ## Nghiệm thu còn lại
 
 Đối chiếu grammar journal của backup engine thật, metadata checkpoint, chính sách retention và bằng chứng checksum/restore độc lập. Đo thời gian collector/I/O, theo dõi backup tự nhiên và reboot thật vào cửa sổ bảo trì. Không tạo sự cố mất Edge trên connector production chỉ để thử UI; kiểm thử container Running nhưng Edge=0 được thực hiện bằng fixture cô lập.
+
+## Bản vá 0.2.1
+
+Operator phát hiện trên 0.2.0 bảng evidence bị chèn lặp trong h1, làm chữ chồng và đẩy nội dung xuống. Bản vá bỏ bản chèn nhầm, giữ đúng một bảng sau inventory; bổ sung kiểm tra h1, ID duy nhất và vị trí bảng trong Chromium ở bốn kích thước. Không thay chính sách thu thập hoặc xác thực. Dùng cùng quy trình prepare/activate với SHA của bản vá; rollback sẽ về release 0.2.0 đang chạy.

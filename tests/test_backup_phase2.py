@@ -168,7 +168,10 @@ def test_backup_pages_api_empty_and_partial_job(tmp_path):
     assert client.get('/api/v1/backups/diagnostics').status_code==401
     with client.session_transaction() as session:session['authenticated']=True
     assert client.get('/backups').status_code==200
-    assert 'Chưa rõ kết quả' in client.get('/backups').text
+    page = client.get('/backups').text
+    assert 'Chưa rõ kết quả' in page
+    assert page.count('id="evidence-checks"') == 1
+    assert '<h1>Quản lý backup\n</h1>' in page
     assert client.get('/api/v1/backups/inventory').json['data']['count'] is None
     assert client.get('/api/v1/backups/diagnostics').json['data']['unknown_count']>0
     assert client.post('/api/v1/backups/diagnostics').status_code==405

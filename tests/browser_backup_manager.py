@@ -65,6 +65,9 @@ def main():
                         page.goto(base+'/backups');page.wait_for_load_state('networkidle')
                         assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
                         expect(page.get_by_role('heading',name='Lịch sử chạy backup')).to_be_visible()
+                        expect(page.locator('h1')).to_have_text('Quản lý backup')
+                        expect(page.locator('#evidence-checks')).to_have_count(1)
+                        assert page.locator('#evidence-checks').evaluate("node => !node.closest('.page-heading') && node.getBoundingClientRect().top > document.querySelector('#snapshot-inventory').getBoundingClientRect().bottom")
                         if scenario=='normal':
                             assert '65.6 giây' in page.locator('#job-history').inner_text()
                             assert 'Engine báo PASS · thiếu bằng chứng phiên' in page.locator('#job-history').inner_text()
