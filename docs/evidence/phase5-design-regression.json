@@ -1,0 +1,232 @@
+{
+  "data_source": "SYNTHETIC FIXTURES, NOT PRODUCTION",
+  "checks": [
+    {
+      "page": "/login",
+      "scheme": "light",
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "page": "/login",
+      "scheme": "light",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "page": "/",
+      "scheme": "light",
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "page": "/backups",
+      "scheme": "light",
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "page": "/logs",
+      "scheme": "light",
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "page": "/about",
+      "scheme": "light",
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "page": "/",
+      "scheme": "light",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "page": "/backups",
+      "scheme": "light",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "page": "/logs",
+      "scheme": "light",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "page": "/about",
+      "scheme": "light",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "page": "/",
+      "scheme": "light",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "page": "/backups",
+      "scheme": "light",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "page": "/logs",
+      "scheme": "light",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "page": "/about",
+      "scheme": "light",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "page": "/",
+      "scheme": "light",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "page": "/backups",
+      "scheme": "light",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "page": "/logs",
+      "scheme": "light",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "page": "/about",
+      "scheme": "light",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "scenario": "keyboard_skip",
+      "scheme": "light",
+      "status": "PASS"
+    },
+    {
+      "page": "/login",
+      "scheme": "dark",
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "page": "/login",
+      "scheme": "dark",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "page": "/",
+      "scheme": "dark",
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "page": "/backups",
+      "scheme": "dark",
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "page": "/logs",
+      "scheme": "dark",
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "page": "/about",
+      "scheme": "dark",
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "page": "/",
+      "scheme": "dark",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "page": "/backups",
+      "scheme": "dark",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "page": "/logs",
+      "scheme": "dark",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "page": "/about",
+      "scheme": "dark",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "page": "/",
+      "scheme": "dark",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "page": "/backups",
+      "scheme": "dark",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "page": "/logs",
+      "scheme": "dark",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "page": "/about",
+      "scheme": "dark",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "page": "/",
+      "scheme": "dark",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "page": "/backups",
+      "scheme": "dark",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "page": "/logs",
+      "scheme": "dark",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "page": "/about",
+      "scheme": "dark",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "scenario": "keyboard_skip",
+      "scheme": "dark",
+      "status": "PASS"
+    }
+  ],
+  "javascript_errors": []
+}

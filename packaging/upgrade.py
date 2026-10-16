@@ -67,7 +67,7 @@ def prepare(source):
     checked([python,'-m','pip','install','-r',str(destination/'requirements.lock')])
     checked([python,'-m','pip','install','--no-deps',str(destination)])
     checked([python,'-I','-c',
-             "from mayhome_center import create_app; a=create_app({'AUTH_TOKEN':''}); assert a.test_client().get('/healthz').json == {'alive':True}"])
+             "import sqlite3; c=sqlite3.connect(':memory:'); assert c.execute('select 1').fetchone() == (1,); c.close(); from mayhome_center import create_app; a=create_app({'AUTH_TOKEN':''}); assert a.test_client().get('/healthz').json == {'alive':True}"])
     clean_source(source)
     if checked(['git','rev-parse','HEAD'],cwd=source,capture_output=True,text=True).stdout.strip()!=sha:
         raise RuntimeError('Source HEAD changed during preparation')

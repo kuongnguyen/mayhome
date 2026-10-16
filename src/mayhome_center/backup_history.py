@@ -101,3 +101,19 @@ def current_execution(service, events, monotonic_usec, boot_id=None):
     elif isinstance(start,int) and isinstance(finish,int) and 0 < start <= finish <= monotonic_usec:
         result['last_execution_duration_sec'] = round((finish-start)/1_000_000, 3)
     return result
+
+
+def grammar_summary(text, events):
+    import json
+    tagged=0
+    for line in text.splitlines()[:1000]:
+        try:
+            message=json.loads(line).get('MESSAGE','')
+            if isinstance(message,str) and re.search(r'\bNC-BACKUP-RC1\.[23]\b',message):tagged+=1
+        except (ValueError,AttributeError):pass
+    counts={name:sum(row['event']==name for row in events) for name in EVENTS}
+    return {'source':'bounded_journal_30_days','tagged_lines':tagged,'recognized_events':len(events),
+            'unrecognized_tagged_lines':max(0,tagged-len(events)),'events':counts,
+            'with_invocation_id':sum(row.get('invocation_id') is not None for row in events),
+            'with_boot_id':sum(row.get('boot_id') is not None for row in events),
+            'start_observed':counts['BACKUP START']>0,'note':'Không xuất MESSAGE thô; thiếu START/ID thì thời lượng chưa xác minh.'}

@@ -5,7 +5,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 DESTINATION = ROOT / 'artifacts'
-SOURCES = ('domain.py','collector.py','post_boot.py','preflight.py','backup_history.py','backup_diagnostics.py','snapshot_metadata.py','hardware.py')
+SOURCES = ('domain.py','collector.py','post_boot.py','preflight.py','backup_history.py','backup_diagnostics.py','snapshot_metadata.py','hardware.py','history_store.py','alerts.py')
 
 def build():
     DESTINATION.mkdir(exist_ok=True)

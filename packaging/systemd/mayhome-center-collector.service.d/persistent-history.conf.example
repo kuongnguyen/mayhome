@@ -1,0 +1,5 @@
+[Service]
+Environment=MHC_HISTORY_PERSIST=1
+StateDirectory=mayhome-center
+StateDirectoryMode=0750
+ReadWritePaths=/var/lib/mayhome-center

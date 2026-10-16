@@ -2,7 +2,7 @@
 
 Ứng dụng giám sát tài nguyên máy chủ, ưu tiên **Nextcloud Backup Manager** theo [manifest RC1](docs/MANIFEST.md). Python 3.12+, Flask, Jinja, Gunicorn; không cần Node hoặc database.
 
-**Trạng thái: 0.4.0 đang review — [Tổng quan phần cứng theo PiCC, Backup Manager riêng](docs/hardware-overview.md).** Operator đã mở được 0.2.0 trên mayhome; chưa nghiệm thu đầy đủ RC1 production. Cloud không có kết nối trực tiếp tới mayhome. Xem [hướng dẫn nâng cấp có rollback](docs/backup-manager-phase2.md).
+**Trạng thái: 0.5.0 đang review — [maintenance/log evidence, cảnh báo và lịch sử qua reboot](docs/alerts-history-maintenance.md).** Chưa triển khai bản mới trên mayhome. Xem [quy trình nâng cấp có rollback](docs/backup-manager-phase2.md).
 
 ## Chạy trong môi trường phát triển
 
@@ -20,6 +20,8 @@ Server Gunicorn nghe **127.0.0.1:5010**. Script in đường dẫn tệp khóa �
 Nếu chưa có collector JSON hợp lệ, ứng dụng hiển thị `UNKNOWN`, API dữ liệu trả 503; đây là trạng thái đúng, không phải dữ liệu demo. `/healthz` chỉ chứng minh web còn sống. `/readyz` yêu cầu đăng nhập và collector còn mới.
 
 ## Đã triển khai
+
+- Cảnh báo tại dashboard cho backup/tunnel/dung lượng; lịch sử SQLite riêng giữ24h thô/30ngày trung bình phút, tùy chọn bật bằng drop-in; công cụ đối chiếu log đã lọc.
 
 - Tổng quan phần cứng: CPU, RAM, nhiệt độ, Disk I/O, Network, Uptime; collector đọc counter Linux, biểu đồ tối đa 120 mẫu/1 giờ trong `/run`, các trang backup tách riêng.
 

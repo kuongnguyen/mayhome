@@ -47,6 +47,19 @@ def run(argv, timeout=3, max_bytes=LIMIT):
                 process.wait()
                 raise
 
+def parse_systemd_time(value):
+    if not isinstance(value,str):return None
+    match=re.fullmatch(r'(?:[A-Za-z]{3} )?([0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}) (UTC|ICT|[+-][0-9]{2}(?::?[0-9]{2})?)',value)
+    if not match:return None
+    from datetime import datetime
+    zone=match[2]
+    if zone=='UTC':zone='+0000'
+    elif zone=='ICT':zone='+0700'
+    elif len(zone)==3:zone+='00'
+    try:return datetime.strptime(match[1]+' '+zone,'%Y-%m-%d %H:%M:%S %z').timestamp()
+    except ValueError:return None
+
+
 def unit_status(unit):
     if unit not in UNITS:
         raise ProbeError('unit not allowed')
@@ -60,6 +73,7 @@ def unit_status(unit):
         return int(value) if value.isdigit() and len(value)<=18 else None
     invocation = props.get('InvocationID', '')
     return {'unit_name': unit, 'invocation_id':invocation if re.fullmatch(r'[0-9a-f]{32}',invocation) else None,
+            'next_run_epoch':parse_systemd_time(props.get('NextElapseUSecRealtime')),
             'exec_start_monotonic_usec':usec('ExecMainStartTimestampMonotonic'),
             'exec_exit_monotonic_usec':usec('ExecMainExitTimestampMonotonic'), 'active_state': state('ActiveState', ('active','inactive','failed','activating','deactivating')),
             'sub_state': state('SubState', ('running','waiting','dead','exited','failed','elapsed')),
@@ -186,6 +200,8 @@ def collect():
     journal = probe('JOURNAL_UNAVAILABLE',lambda:run(['/usr/bin/journalctl','--unit=nextcloud-auto-backup.service','--since=-30days','--lines=1000','--output=json','--no-pager'],max_bytes=524288), '')
     logs = parse_journal(journal, max_records=1000)
     jobs = reconstruct_jobs(logs)
+    from .backup_history import grammar_summary
+    grammar = grammar_summary(journal, logs)
     nc_status = probe('NEXTCLOUD_STATUS_UNAVAILABLE', nextcloud_status, {'maintenance':None,'source':'unavailable'})
     def marker_status():
         parent = open_dir('/var/lib/nextcloud-auto-backup', trusted=True)
@@ -201,7 +217,7 @@ def collect():
     # A missing marker is distinct from unreadable parent; do not claim absent from access failure.
     engine = services[0]
     backup = {'active_state':engine['active_state'], 'result':'failed' if engine.get('active_state')=='failed' or engine.get('result') in ('exit-code','timeout','signal','core-dump','resources') else 'unknown',
-              'next_run':services[1].get('next_run'), 'stage':'Unknown', 'elapsed_sec':None,
+              'next_run':services[1].get('next_run'), 'next_run_epoch':services[1].get('next_run_epoch'), 'stage':'Unknown', 'elapsed_sec':None,
               'maintenance':nc_status.get('maintenance'), 'marker_present':marker, 'services':services, 'nextcloud_status':nc_status}
     try:
         current_boot = Path('/proc/sys/kernel/random/boot_id').read_text().strip().replace('-','')
@@ -228,7 +244,7 @@ def collect():
     ])
     data = {
         'host':{'name':'mayhome','observed_name':os.uname().nodename,'timezone':time.tzname[0]},
-        'post_boot':post_boot,'backup':backup,'storage':storage,'containers':containers,'snapshots':snapshots,'inventory':inventory_state,
+        'post_boot':post_boot,'backup':backup,'log_grammar':grammar,'storage':storage,'containers':containers,'snapshots':snapshots,'inventory':inventory_state,
         'logs':list(reversed(logs))[:200], 'jobs':jobs,
         'retention':{'days':14,'mode':'unknown','eligible_count':None,'protected_count':sum(r['protected'] for r in snapshots),
                      'note':'Chính sách 14 ngày từ manifest; chưa xác minh cấu hình thực tế.'}}
@@ -239,7 +255,14 @@ def collect():
     previous_data = previous.get('data') if isinstance(previous, dict) else None
     old_hardware = previous_data.get('hardware') if isinstance(previous_data, dict) else None
     data['hardware'] = probe('HARDWARE_UNAVAILABLE', lambda:collect_hardware(old_hardware), {})
-    return {'schema_version':1,'collector_version':'0.4.0','generated_at':utcnow().isoformat(),'data':data,'errors':errors}
+    from .history_store import persist, load_alerts
+    from .alerts import evaluate
+    old_alerts = previous_data.get('alerts') if isinstance(previous_data,dict) else None
+    if old_alerts is None and os.environ.get('MHC_HISTORY_PERSIST')=='1':old_alerts=load_alerts()
+    data['alerts'] = evaluate(data, previous=old_alerts)
+    data['history_persistence'] = persist(data['hardware'],data['alerts'])
+    if data['history_persistence'].get('state')=='degraded':data['alerts']=evaluate(data,previous=old_alerts)
+    return {'schema_version':1,'collector_version':'0.5.0','generated_at':utcnow().isoformat(),'data':data,'errors':errors}
 
 def publish(payload):
     parent = OUTPUT.parent

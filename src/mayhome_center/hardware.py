@@ -161,22 +161,22 @@ def public(hardware, freshness):
     return {key:value for key,value in data.items() if key not in ('_counters','boot_id','monotonic')} | {'freshness':freshness}
 
 
-def series(history, key):
+def series(history, key, max_gap=MAX_GAP):
     """SVG segments with a real time axis; nulls and sample gaps break the line."""
     if key not in METRICS or not isinstance(history,list):return []
     rows=[]
     for row in history[-POINTS:]:
         try:stamp=datetime.fromisoformat(row['timestamp']).timestamp()
         except (ValueError,KeyError,TypeError):continue
-        rows.append((stamp,row.get(key)))
+        rows.append((stamp,row.get(key),row.get('discontinuous',False)))
     if len(rows)<2:return []
     start,end=rows[0][0],rows[-1][0]
-    values=[value for _,value in rows if finite(value)]
+    values=[value for _,value,_ in rows if finite(value)]
     if not values or end<=start:return []
     low,high=min(values),max(values);span=max(high-low,1)
     segments=[];points=[];last=None
-    for stamp,value in rows:
-        if not finite(value) or (last is not None and stamp-last>MAX_GAP):
+    for stamp,value,discontinuous in rows:
+        if not finite(value) or discontinuous or (last is not None and stamp-last>max_gap):
             if len(points)>1:segments.append(' '.join(points))
             points=[]
         if finite(value):points.append(f'{(stamp-start)/(end-start)*300:.2f},{36-(value-low)/span*28:.2f}')

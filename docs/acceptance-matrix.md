@@ -98,3 +98,7 @@ Design reference: PiCC `535af154cab4b5425b72537decd65cd1dc27d1a4`. MAYHOME layou
 ## Review 0.4.0 — hardware dashboard
 
 Tổng quan có 6 thẻ phần cứng, chart từ history thật, mẫu đầu/reset/reboot/gap thành unknown; Backup Manager ở `/backups`. 166 pytest cases; 95 browser cases (18 hardware + 15 backup + 24 tunnel + 38 design), zero JavaScript errors. Cloud two-sample counter smoke is recorded separately from synthetic UI fixtures. See [sources, limits and upgrade](hardware-overview.md). Native mayhome permissions, sensor availability, overhead and 15-minute target runtime acceptance remain pending.
+
+## Review 0.5.0 — local alerts and persistent history
+
+Code adds fixed read-only maintenance/log evidence, local backup/tunnel/disk alerts and optional MHC-only SQLite history. Validation: 189 pytest cases and 110 browser cases (15 alerts/history, 18 hardware, 15 backup, 24 tunnel, 38 design); synthetic fixtures and temporary databases, no production configuration changed. Tests cover database reopen/reboot state, clock changes, full-month bounded queries, retention, quota, low disk, locks, auth and refusal to overwrite custom observer settings. [Sources, limits and activation](alerts-history-maintenance.md). Native maintenance/log grammar evidence, observer enablement, disk overhead and reboot acceptance on mayhome remain pending.

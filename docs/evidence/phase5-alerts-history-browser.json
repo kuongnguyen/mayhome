@@ -1,0 +1,96 @@
+{
+  "data_source": "SYNTHETIC FIXTURES, NOT PRODUCTION",
+  "checks": [
+    {
+      "width": 360,
+      "hours": 1,
+      "alerts": 3,
+      "overflow": false
+    },
+    {
+      "width": 360,
+      "hours": 6,
+      "alerts": 3,
+      "overflow": false
+    },
+    {
+      "width": 360,
+      "hours": 24,
+      "alerts": 3,
+      "overflow": false
+    },
+    {
+      "width": 360,
+      "hours": 168,
+      "alerts": 3,
+      "overflow": false
+    },
+    {
+      "width": 360,
+      "hours": 720,
+      "alerts": 3,
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "hours": 1,
+      "alerts": 3,
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "hours": 6,
+      "alerts": 3,
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "hours": 24,
+      "alerts": 3,
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "hours": 168,
+      "alerts": 3,
+      "overflow": false
+    },
+    {
+      "width": 768,
+      "hours": 720,
+      "alerts": 3,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "hours": 1,
+      "alerts": 3,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "hours": 6,
+      "alerts": 3,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "hours": 24,
+      "alerts": 3,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "hours": 168,
+      "alerts": 3,
+      "overflow": false
+    },
+    {
+      "width": 1440,
+      "hours": 720,
+      "alerts": 3,
+      "overflow": false
+    }
+  ],
+  "javascript_errors": []
+}

@@ -3,6 +3,7 @@ import os
 import re
 import secrets
 import time
+from pathlib import Path
 from collections import OrderedDict
 from flask import Flask, abort, jsonify, redirect, render_template, request, session, url_for
 from .domain import MODULES, SNAPSHOT_PATTERN, protection, utcnow
@@ -16,6 +17,7 @@ def create_app(config=None):
         SECRET_KEY=os.environ.get("MHC_SESSION_KEY") or secrets.token_hex(32),
         AUTH_TOKEN=os.environ.get("MHC_AUTH_TOKEN", ""),
         STATUS_PATH="/run/mayhome-center/status.json",
+        HISTORY_PATH="/var/lib/mayhome-center/hardware.sqlite3",
         TRUSTED_HOSTS=["localhost", "127.0.0.1", "mayhome.cuong.win"],
         SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_SAMESITE="Strict",
         SESSION_COOKIE_SECURE=os.environ.get("MHC_COOKIE_SECURE", "1") != "0",
@@ -40,7 +42,7 @@ def create_app(config=None):
             return str(value)
     @app.context_processor
     def release_version():
-        return {'mhc_version':'0.4.0'}
+        return {'mhc_version':'0.5.0'}
     attempts = OrderedDict()
 
     @app.before_request
@@ -126,10 +128,23 @@ def create_app(config=None):
     @app.get("/logs")
     @app.get("/about")
     def page():
+        from .history_store import read as read_history
+        from .alerts import present as present_alerts
+        try:
+            hours=int(request.args.get("hours",1))
+            if hours not in (1,6,24,168,720):raise ValueError()
+        except ValueError:abort(400)
         observed = load_status(app.config["STATUS_PATH"])
-        return render_template("dashboard.html", modules=MODULES, data=observed.data,
+        hardware_data=public_hardware(observed.data.get("hardware", {}),observed.freshness)
+        persistent=read_history(hours,path=Path(app.config['HISTORY_PATH'])) if request.path=='/' else {}
+        if persistent.get('state')=='available':
+            hardware_data={**hardware_data,'history':persistent['items'],'history_max_gap':persistent['max_gap_seconds'],'history_source':persistent['aggregation']}
+        elif hours!=1:
+            hardware_data={**hardware_data,'history':[]}
+        return render_template("dashboard.html", history_range=hours, history_state=persistent,
+            active_alerts=present_alerts(observed.data.get('alerts',{}),observed.freshness), modules=MODULES, data=observed.data,
             errors=observed.errors, freshness=observed.freshness, collected_at=observed.collected_at,
-            status=protection(observed.data, observed.freshness), section=request.path, hardware=public_hardware(observed.data.get("hardware", {}),observed.freshness), tunnel_status=display_status(observed.data.get("post_boot", {}), observed.freshness),
+            status=protection(observed.data, observed.freshness), section=request.path, hardware=hardware_data, tunnel_status=display_status(observed.data.get("post_boot", {}), observed.freshness),
             tunnel_connectors=present_monitor(observed.data.get("post_boot", {}), observed.freshness).get("connectors", {}))
 
     def envelope(data, observed, status=200):
@@ -141,20 +156,33 @@ def create_app(config=None):
         observed = load_status(app.config["STATUS_PATH"])
         data = observed.data
         if resource == "capabilities":
-            return envelope({"modules": [m["id"] for m in MODULES], "read_only": True, "post_boot_monitor": True,
+            return envelope({"modules": [m["id"] for m in MODULES], "read_only": True, "post_boot_monitor": True, "persistent_history_supported":True, "operational_alerts":True, "external_notifications":False,
                 "run_backup": False, "restore": False, "delete": False, "retention_apply": False}, observed)
-        allowed = {"overview", "host/hardware", "host/post-boot", "backups/inventory", "backups/diagnostics", "backups/status", "backups/jobs", "backups/snapshots", "backups/retention", "backups/storage", "logs"}
+        allowed = {"overview", "alerts", "backups/log-grammar", "host/hardware/history", "host/hardware", "host/post-boot", "backups/inventory", "backups/diagnostics", "backups/status", "backups/jobs", "backups/snapshots", "backups/retention", "backups/storage", "logs"}
         detail = re.fullmatch(r"backups/snapshots/(" + SNAPSHOT_PATTERN + r")", resource)
         if resource not in allowed and not detail:
             abort(404)
+        if resource == "host/hardware/history":
+            from .history_store import read as read_history
+            try:
+                hours=int(request.args.get('hours',1));points=int(request.args.get('points',240))
+                result=read_history(hours,points,Path(app.config['HISTORY_PATH']))
+            except ValueError:return jsonify(error='INVALID_HISTORY_RANGE'),400
+            return envelope(result,observed,200 if result['state']=='available' else 503)
         if observed.freshness == "unavailable":
             return envelope({}, observed, 503)
+        if resource == "alerts":
+            from .alerts import present
+            return envelope(present(data.get('alerts',{}),observed.freshness),observed)
+        if resource == "backups/log-grammar":
+            return envelope(data.get('log_grammar',{}),observed)
         if resource == "host/hardware":
             return envelope(public_hardware(data.get("hardware", {}), observed.freshness), observed)
         if resource == "host/post-boot":
             return envelope(present_monitor(data.get("post_boot", {}), observed.freshness), observed)
         if resource == "overview":
-            return envelope({**data, "hardware":public_hardware(data.get("hardware",{}),observed.freshness), "post_boot": present_monitor(data.get("post_boot", {}), observed.freshness), "diagnostics":present_diagnostics(data.get("diagnostics",{}),observed.freshness), "status": protection(data, observed.freshness), "server_timestamp": utcnow().isoformat()}, observed)
+            from .alerts import present as present_alerts
+            return envelope({**data, 'alerts':present_alerts(data.get('alerts',{}),observed.freshness), "hardware":public_hardware(data.get("hardware",{}),observed.freshness), "post_boot": present_monitor(data.get("post_boot", {}), observed.freshness), "diagnostics":present_diagnostics(data.get("diagnostics",{}),observed.freshness), "status": protection(data, observed.freshness), "server_timestamp": utcnow().isoformat()}, observed)
         if detail:
             item = next((x for x in data.get("snapshots", []) if x["id"] == detail[1]), None)
             if item is None:
