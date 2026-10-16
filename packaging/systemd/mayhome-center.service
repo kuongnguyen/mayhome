@@ -1,0 +1,32 @@
+[Unit]
+Description=MAYHOME CENTER read-only web
+After=network.target
+
+[Service]
+Type=simple
+User=mayhome-center
+Group=mayhome-center
+WorkingDirectory=/opt/mayhome-center
+EnvironmentFile=/etc/mayhome-center.env
+ExecStart=/opt/mayhome-center/.venv/bin/gunicorn --bind 127.0.0.1:5010 --workers 2 --threads 2 --timeout 15 --forwarded-allow-ips= --worker-tmp-dir /tmp mayhome_center:create_app()
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+CapabilityBoundingSet=
+RestrictAddressFamilies=AF_INET AF_UNIX
+InaccessiblePaths=-/run/docker.sock -/mnt/nextcloud_storage -/mnt/nextcloud_backup -/var/lib/nextcloud-auto-backup
+UMask=0077
+MemoryMax=200M
+CPUQuota=100%
+
+[Install]
+WantedBy=multi-user.target

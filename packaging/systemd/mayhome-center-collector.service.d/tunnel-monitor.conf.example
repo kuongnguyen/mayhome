@@ -1,0 +1,8 @@
+# REVIEW CONFIGURATION ONLY. Installer does not copy or activate this file.
+# Operator verified on mayhome, 2026-10-16: cuongnh_nextcloud-net = 172.18.0.0/16.
+# Recheck network CIDR before activation or after Docker network recreation.
+[Service]
+Environment=MHC_TUNNEL_MONITOR=1
+Environment=MHC_TUNNEL_DOCKER_MONITOR=1
+IPAddressAllow=172.18.0.0/16
+# Inherits IPAddressDeny=any and IPAddressAllow=localhost from the base unit.

@@ -1,0 +1,72 @@
+{
+  "source": "operator-provided terminal output in conversation",
+  "reported_on": "2026-10-16",
+  "direct_cloud_host_observation": false,
+  "mounts": [
+    {
+      "mountpoint": "/mnt/nextcloud_storage",
+      "uuid": "aa274c8e-844a-4482-aac2-9313ad6f0108",
+      "filesystem": "ext4",
+      "rw": true
+    },
+    {
+      "mountpoint": "/mnt/nextcloud_backup",
+      "uuid": "5740eea6-8bf1-4f3e-ac9d-2c66bda6147c",
+      "filesystem": "ext4",
+      "rw": true
+    }
+  ],
+  "timers": [
+    {
+      "name": "nextcloud-mount-guard.timer",
+      "active_state": "active",
+      "enabled_state": "enabled"
+    },
+    {
+      "name": "nextcloud-auto-backup.timer",
+      "active_state": "active",
+      "enabled_state": "enabled"
+    },
+    {
+      "name": "nextcloud-backup-watchdog.timer",
+      "active_state": "active",
+      "enabled_state": "enabled"
+    }
+  ],
+  "containers": [
+    {
+      "name": "nextcloud-app",
+      "running": true
+    },
+    {
+      "name": "nextcloud-cron",
+      "running": true
+    },
+    {
+      "name": "nextcloud-db",
+      "running": true
+    }
+  ],
+  "nextcloud": {
+    "installed": true,
+    "version": "35.0.1.1",
+    "maintenance": false,
+    "needs_db_upgrade": false
+  },
+  "recovery_marker": {
+    "parent_observed": true,
+    "parent_owner": "root:root",
+    "parent_mode": "0700",
+    "marker_present": false
+  },
+  "deployment_performed": false,
+  "full_stage_0_acceptance": "PENDING",
+  "remaining_evidence": [
+    "baseline and protected checkpoint metadata",
+    "backup engine and guard script review/hashes",
+    "timer schedules and retention audit actual state",
+    "release permissions and systemd sandbox on host",
+    "backup integrity and actual automatic run",
+    "deployment authorization and runtime acceptance"
+  ]
+}

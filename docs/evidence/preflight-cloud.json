@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-10-16T02:58:53.098616+00:00",
+  "target_host_verified": false,
+  "deployment_allowed": false,
+  "read_only": true,
+  "automatic_checks_passed": false,
+  "checks": [
+    {
+      "code": "TARGET_HOST_MISMATCH",
+      "outcome": "BLOCKED",
+      "data": null
+    }
+  ],
+  "manual_gates": [
+    "NEXTCLOUD_MAINTENANCE_OFF_VERIFIED",
+    "BACKUP_GUARD_REVIEWED_AND_VERIFIED",
+    "RELEASE_AND_COLLECTOR_PERMISSIONS_REVIEWED",
+    "TUNNEL_ENDPOINT_MAPPING_REVIEWED",
+    "CLOUDFLARE_TUNNEL_ROUTES_REVIEWED",
+    "ENGINE_SCRIPT_HASHES_RECORDED",
+    "BASELINE_AND_CHECKPOINT_PRESERVED",
+    "RETENTION_AND_0200_RUN_EVIDENCE_REVIEWED",
+    "EXPLICIT_DEPLOYMENT_AUTHORIZATION"
+  ]
+}

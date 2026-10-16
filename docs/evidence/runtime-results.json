@@ -1,0 +1,8 @@
+{
+  "server": "Gunicorn 2 workers / 2 threads, uid 1000, loopback",
+  "authenticated_requests": 30,
+  "page_latency_ms_mean": 1.29,
+  "page_latency_ms_max": 3.43,
+  "unavailable_collector_http": 503,
+  "production_runtime_acceptance": "NOT RUN"
+}

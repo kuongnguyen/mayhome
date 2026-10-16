@@ -1,0 +1,11 @@
+[Unit]
+Description=MAYHOME CENTER telemetry refresh (read-only)
+
+[Timer]
+OnBootSec=30s
+OnUnitInactiveSec=30s
+AccuracySec=5s
+Unit=mayhome-center-collector.service
+
+[Install]
+WantedBy=timers.target

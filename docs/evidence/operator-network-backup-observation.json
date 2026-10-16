@@ -1,0 +1,27 @@
+{
+  "source": "operator-provided terminal output in conversation",
+  "reported_on": "2026-10-16",
+  "direct_cloud_host_observation": false,
+  "docker_network": {
+    "name": "cuongnh_nextcloud-net",
+    "subnet": "172.18.0.0/16",
+    "gateway": "172.18.0.1"
+  },
+  "backup_service": {
+    "name": "nextcloud-auto-backup.service",
+    "active_state": "inactive",
+    "sub_state": "dead",
+    "result": "success"
+  },
+  "backup_last_run_time_verified": false,
+  "backup_integrity_verified": false,
+  "deployment_performed": false,
+  "remaining_gates": [
+    "mount UUID/RW",
+    "guard/timers/cron",
+    "recovery marker",
+    "maintenance OFF",
+    "collector sandbox on host",
+    "deployment review"
+  ]
+}

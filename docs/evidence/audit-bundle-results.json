@@ -1,0 +1,7 @@
+{
+  "stdlib_only_run": "PASS (python3 -S)",
+  "deterministic_build": "PASS",
+  "cloud_target_rejection": "PASS",
+  "deployment_allowed": false,
+  "sha256": "4d5a4e6aa9ec66a6c3f62e5602dafe8fd3c445ae5e0c7a256b8d76050c794584"
+}
