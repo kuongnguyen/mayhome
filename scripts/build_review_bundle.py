@@ -26,7 +26,7 @@ def build():
     output = ROOT/'artifacts';output.mkdir(exist_ok=True)
     files = sources()
     contents = {path.relative_to(ROOT).as_posix():path.read_bytes() for path in files}
-    manifest = {'release':'0.3.0-review-backup-manager','production_acceptance':'PENDING',
+    manifest = {'release':'0.4.0-review-backup-manager','production_acceptance':'PENDING',
                 'git_commit':None,'files':{name:hashlib.sha256(body).hexdigest() for name,body in contents.items()}}
     contents['SOURCE-MANIFEST.json']=(json.dumps(manifest,indent=2,sort_keys=True)+'\n').encode()
     archive=output/'mayhome-center-review.zip'

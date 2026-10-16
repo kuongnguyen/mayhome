@@ -1,0 +1,27 @@
+{% set current = hardware.get('current', {}) %}
+{% set history = hardware.get('history', []) %}
+<div class="section-label"><h2>Tổng quan phần cứng</h2><span data-live-status class="status {{ 'RUNNING' if freshness == 'fresh' and current else 'STALE' if freshness == 'stale' else 'UNKNOWN' }}">{{ 'MẪU MỚI' if freshness == 'fresh' and current else 'STALE' if freshness == 'stale' else 'CHƯA CÓ MẪU' }}</span></div>
+<div class="hardware-grid" aria-label="Phần cứng máy mayhome">
+{% for key,title,unit,kind,subtitle in [('cpu_percent','CPU','%','cpu','Tổng mức sử dụng CPU'),('memory_percent','Memory','%','memory','Bộ nhớ vật lý đang dùng'),('temperature_c','Temperature','°C','temperature','Cảm biến CPU / package'),('disk_read_bps','Disk activity','B/s','disk','Đọc · ổ đĩa vật lý'),('network_down_bps','Network','B/s','network','Nhận · giao diện đang hoạt động'),('uptime_seconds','Uptime','','clock','Thời gian từ khi máy khởi động')] %}
+<article class="hardware-card hw-{{ kind }}" data-hardware="{{ key }}">
+<div class="metric-heading"><span class="metric-icon">{{ icon(kind) }}</span><h3>{{ title }}</h3></div>
+<p class="metric-subtitle">{{ subtitle }}</p>
+<div class="hardware-value"><strong data-hardware-value>{% if key == 'uptime_seconds' %}{{ current.get(key)|uptime }}{% elif kind in ('disk','network') %}{{ current.get(key)|filesizeformat if current.get(key) is not none else '—' }}{% else %}{{ current.get(key)|metric(1 if kind == 'temperature' else 0) }}{% endif %}</strong><span>{{ '/s' if kind in ('disk','network') else unit }}</span></div>
+<div class="hardware-details">
+{% if kind == 'cpu' %}<div><span>Số lõi online</span><b>{{ current.get('cores')|metric }}</b></div><div><span>Tần số</span><b>{{ current.get('frequency_mhz')|metric }} MHz</b></div>
+{% elif kind == 'memory' %}<div><span>Đang dùng</span><b>{{ current.get('memory_used')|filesizeformat if current.get('memory_used') is not none else '—' }}</b></div><div><span>Tổng</span><b>{{ current.get('memory_total')|filesizeformat if current.get('memory_total') is not none else '—' }}</b></div>
+{% elif kind == 'temperature' %}<div><span>Nguồn</span><b>CPU / SoC</b></div><div><span>Trạng thái</span><b>{{ 'Có cảm biến' if current.get(key) is not none else 'Không khả dụng' }}</b></div>
+{% elif kind == 'disk' %}<div><span>Đọc</span><b>{{ current.get('disk_read_bps')|filesizeformat if current.get('disk_read_bps') is not none else '—' }}/s</b></div><div><span>Ghi</span><b>{{ current.get('disk_write_bps')|filesizeformat if current.get('disk_write_bps') is not none else '—' }}/s</b></div>
+{% elif kind == 'network' %}<div><span>↓ Nhận</span><b>{{ current.get('network_down_bps')|filesizeformat if current.get('network_down_bps') is not none else '—' }}/s</b></div><div><span>↑ Gửi</span><b>{{ current.get('network_up_bps')|filesizeformat if current.get('network_up_bps') is not none else '—' }}/s</b></div>
+{% else %}<div><span>Thu thập</span><b>Theo timer MHC</b></div><div><span>Chế độ</span><b>Chỉ đọc</b></div>{% endif %}
+</div>
+{% if kind != 'clock' %}{% set segments = hardware_series(history,key) %}<div class="hardware-chart" aria-label="Lịch sử {{ title }}, trục dọc tự động, khoảng trống là thiếu dữ liệu">{% if segments %}<svg viewBox="0 0 300 44" preserveAspectRatio="none" role="img" aria-label="Lịch sử {{ title }}"><path class="chart-guide" d="M0 37H300M0 22H300M0 7H300"/>{% for points in segments %}<polyline points="{{ points }}"/>{% endfor %}</svg>{% else %}<span>Cần thêm mẫu để vẽ biểu đồ</span>{% endif %}</div>
+{% else %}<div class="uptime-note">{{ icon('clock') }} {{ 'Máy chủ đang có mẫu uptime' if current.get(key) is not none else 'Chờ dữ liệu máy chủ' }}</div>{% endif %}
+</article>{% endfor %}
+</div>
+<p class="hardware-caption">Mẫu phần cứng: {{ hardware.get('observed_at')|event_time }} · {{ history|length }} điểm · Tối đa 1 giờ / 120 mẫu trong RAM. Trục dọc biểu đồ tự động. Khoảng mất dữ liệu không được nối.</p>
+<div class="hardware-detail-grid">
+<section class="panel"><div class="panel-heading"><h2>{{ icon('memory') }} Phân bổ bộ nhớ</h2><span class="pill">PHYSICAL RAM</span></div><dl class="facts"><div><dt>Đang dùng</dt><dd>{{ current.get('memory_used')|filesizeformat if current.get('memory_used') is not none else '—' }}</dd></div><div><dt>Khả dụng</dt><dd>{{ current.get('memory_available')|filesizeformat if current.get('memory_available') is not none else '—' }}</dd></div><div><dt>Swap đang dùng</dt><dd>{{ current.get('swap_used')|filesizeformat if current.get('swap_used') is not none else '—' }}</dd></div></dl></section>
+<section class="panel"><div class="panel-heading"><h2>{{ icon('server') }} Máy chủ</h2><span class="pill">LINUX COUNTERS</span></div><dl class="facts"><div><dt>Hostname</dt><dd>{{ data.get('host',{}).get('observed_name') or 'Chưa rõ' }}</dd></div><div><dt>CPU online</dt><dd>{{ current.get('cores')|metric }}</dd></div><div><dt>Khoảng giữa hai mẫu</dt><dd>{{ hardware.get('sample_interval_seconds')|metric(1) }} giây</dd></div></dl></section>
+<section class="panel"><div class="panel-heading"><h2>{{ icon('backup') }} Nextcloud Backup</h2><a class="text-link" href="/backups">Xem chi tiết →</a></div><p class="panel-note">Snapshot, lịch chạy, sức khỏe hai ổ lưu trữ và bảng bằng chứng nằm trong Quản lý backup.</p><p class="panel-note">{{ hardware.get('errors', [])|length }} nguồn phần cứng chưa đọc được. Dấu — là chưa có bằng chứng, không phải giá trị 0.</p></section>
+</div>

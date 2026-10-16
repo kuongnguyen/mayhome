@@ -94,3 +94,7 @@ History correlation, metadata structure/manifest grammar, unknown/stale handling
 ## Review 0.3.0 — PiCC design
 
 Design reference: PiCC `535af154cab4b5425b72537decd65cd1dc27d1a4`. MAYHOME layout/theme/navigation/login updated; source in PiCC unchanged. Cloud validation: 150 pytest cases and 77 browser cases (15 backup, 24 tunnel, 38 design/theme/navigation), zero JavaScript errors. Evidence and target upgrade guide: [PiCC design](picc-design.md). Screenshots use isolated synthetic data. 0.3.0 target upgrade and runtime acceptance remain pending.
+
+## Review 0.4.0 — hardware dashboard
+
+Tổng quan có 6 thẻ phần cứng, chart từ history thật, mẫu đầu/reset/reboot/gap thành unknown; Backup Manager ở `/backups`. 166 pytest cases; 95 browser cases (18 hardware + 15 backup + 24 tunnel + 38 design), zero JavaScript errors. Cloud two-sample counter smoke is recorded separately from synthetic UI fixtures. See [sources, limits and upgrade](hardware-overview.md). Native mayhome permissions, sensor availability, overhead and 15-minute target runtime acceptance remain pending.

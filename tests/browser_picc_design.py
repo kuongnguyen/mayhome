@@ -58,6 +58,7 @@ def main():
                     page.goto(base+'/');page.keyboard.press('Tab')
                     expect(page.locator('.skip')).to_be_focused()
                     page.keyboard.press('Enter')
+                    page.wait_for_url(base+'/#content')
                     assert page.url.endswith('#content')
                     results.append({'scenario':'keyboard_skip','scheme':scheme,'status':'PASS'})
                     context.close()

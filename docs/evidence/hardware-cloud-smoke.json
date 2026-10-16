@@ -1,0 +1,14 @@
+{
+  "environment": "CLOUD WORKSPACE, NOT MAYHOME",
+  "data_source": "actual cloud Linux counters",
+  "collector_ms": [
+    1.91,
+    1.59
+  ],
+  "cpu_value_available": true,
+  "memory_value_available": true,
+  "history_points": 2,
+  "serialized_bytes": 1353,
+  "private_counters_excluded": true,
+  "target_acceptance": "PENDING"
+}

@@ -6,6 +6,7 @@ Mọi endpoint dữ liệu yêu cầu session từ form `/login` (CSRF + khóa t
 |---|---|
 | /healthz | Liveness web, không phải sức khỏe backup |
 | /readyz | Collector fresh, 503 khi missing/stale |
+| /api/v1/host/hardware | Current + bounded history phần cứng, không counter nội bộ |
 | /api/v1/overview | Host, backup, inventory, storage, containers, jobs, logs, alerts/status |
 | /api/v1/backups/status | Engine, timer, marker, maintenance, services |
 | /api/v1/backups/inventory | Thời điểm inventory riêng, số complete/staging hoặc unknown |
@@ -29,3 +30,5 @@ GET /api/v1/host/post-boot và overview.data.post_boot trả {status, code, obse
 Status tổng CRITICAL > UNKNOWN > WARNING > HEALTHY. STALE override tổng và từng connector khi collector quá TTL; liveness/readiness web không chứng minh public route. Auth/GET-only/pagination/error contract khác giữ nguyên. [Chi tiết probe và opt-in](post-boot-monitor.md), [hồ sơ review triển khai](review-dual-connectors.md).
 
 Backup Manager 0.2.0: jobs có mức tin cậy phiên và thời lượng chỉ khi ghép được START/finish hợp lệ. Snapshot detail có structure_checks và bằng chứng định dạng manifest; không xác minh hash SQL/restore. Xem [giới hạn và nâng cấp](backup-manager-phase2.md).
+
+0.4.0: hardware có freshness riêng trong envelope, observed_at, current, history tối đa120 mẫu/1h, rate_state và sample_interval_seconds. Rates null khi chưa đủ hai mẫu/counter reset/reboot/gap. Không có API ghi hoặc truy vấn đường dẫn hệ thống tùy ý. Xem [nguồn và giới hạn phần cứng](hardware-overview.md).

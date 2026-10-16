@@ -40,7 +40,7 @@ def create_app(config=None):
             return str(value)
     @app.context_processor
     def release_version():
-        return {'mhc_version':'0.3.0'}
+        return {'mhc_version':'0.4.0'}
     attempts = OrderedDict()
 
     @app.before_request
@@ -98,6 +98,20 @@ def create_app(config=None):
             return render_template("login.html", error=error), 401
         return render_template("login.html", error=error)
 
+    from .hardware import public as public_hardware, series
+    app.jinja_env.globals['hardware_series'] = series
+    @app.template_filter('metric')
+    def metric(value, digits=0):
+        from .hardware import finite
+        return f'{value:,.{digits}f}' if finite(value) else '—'
+    @app.template_filter('uptime')
+    def uptime(value):
+        from .hardware import finite
+        if not finite(value): return '—'
+        minutes = int(value)//60
+        days, hours = divmod(minutes//60,24)
+        return f'{days}d {hours}h' if days else f'{hours}h {minutes%60}m'
+
     @app.get("/healthz")
     def health():
         return jsonify(alive=True)
@@ -115,7 +129,7 @@ def create_app(config=None):
         observed = load_status(app.config["STATUS_PATH"])
         return render_template("dashboard.html", modules=MODULES, data=observed.data,
             errors=observed.errors, freshness=observed.freshness, collected_at=observed.collected_at,
-            status=protection(observed.data, observed.freshness), section=request.path, tunnel_status=display_status(observed.data.get("post_boot", {}), observed.freshness),
+            status=protection(observed.data, observed.freshness), section=request.path, hardware=public_hardware(observed.data.get("hardware", {}),observed.freshness), tunnel_status=display_status(observed.data.get("post_boot", {}), observed.freshness),
             tunnel_connectors=present_monitor(observed.data.get("post_boot", {}), observed.freshness).get("connectors", {}))
 
     def envelope(data, observed, status=200):
@@ -129,16 +143,18 @@ def create_app(config=None):
         if resource == "capabilities":
             return envelope({"modules": [m["id"] for m in MODULES], "read_only": True, "post_boot_monitor": True,
                 "run_backup": False, "restore": False, "delete": False, "retention_apply": False}, observed)
-        allowed = {"overview", "host/post-boot", "backups/inventory", "backups/diagnostics", "backups/status", "backups/jobs", "backups/snapshots", "backups/retention", "backups/storage", "logs"}
+        allowed = {"overview", "host/hardware", "host/post-boot", "backups/inventory", "backups/diagnostics", "backups/status", "backups/jobs", "backups/snapshots", "backups/retention", "backups/storage", "logs"}
         detail = re.fullmatch(r"backups/snapshots/(" + SNAPSHOT_PATTERN + r")", resource)
         if resource not in allowed and not detail:
             abort(404)
         if observed.freshness == "unavailable":
             return envelope({}, observed, 503)
+        if resource == "host/hardware":
+            return envelope(public_hardware(data.get("hardware", {}), observed.freshness), observed)
         if resource == "host/post-boot":
             return envelope(present_monitor(data.get("post_boot", {}), observed.freshness), observed)
         if resource == "overview":
-            return envelope({**data, "post_boot": present_monitor(data.get("post_boot", {}), observed.freshness), "diagnostics":present_diagnostics(data.get("diagnostics",{}),observed.freshness), "status": protection(data, observed.freshness), "server_timestamp": utcnow().isoformat()}, observed)
+            return envelope({**data, "hardware":public_hardware(data.get("hardware",{}),observed.freshness), "post_boot": present_monitor(data.get("post_boot", {}), observed.freshness), "diagnostics":present_diagnostics(data.get("diagnostics",{}),observed.freshness), "status": protection(data, observed.freshness), "server_timestamp": utcnow().isoformat()}, observed)
         if detail:
             item = next((x for x in data.get("snapshots", []) if x["id"] == detail[1]), None)
             if item is None:

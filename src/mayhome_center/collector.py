@@ -118,8 +118,7 @@ def parse_journal(text, max_records=200):
     return parse_events(text, max_records)
 
 
-def inventory_cache():
-    from .snapshot_metadata import cached_metadata
+def cached_payload():
     try:
         parent = open_dir(OUTPUT.parent, trusted=True)
         try:
@@ -133,9 +132,14 @@ def inventory_cache():
             raw = stream.read(1048577)
             if len(raw)>1048576:
                 return None
-            return cached_metadata(json.loads(raw), utcnow())
+            return json.loads(raw)
     except (OSError, ValueError, ProbeError):
         return None
+
+
+def inventory_cache():
+    from .snapshot_metadata import cached_metadata
+    return cached_metadata(cached_payload(), utcnow())
 
 
 def nextcloud_status():
@@ -230,7 +234,12 @@ def collect():
                      'note':'Chính sách 14 ngày từ manifest; chưa xác minh cấu hình thực tế.'}}
     from .backup_diagnostics import diagnostics
     data['diagnostics'] = diagnostics(data)
-    return {'schema_version':1,'collector_version':'0.3.0','generated_at':utcnow().isoformat(),'data':data,'errors':errors}
+    from .hardware import collect as collect_hardware
+    previous = cached_payload()
+    previous_data = previous.get('data') if isinstance(previous, dict) else None
+    old_hardware = previous_data.get('hardware') if isinstance(previous_data, dict) else None
+    data['hardware'] = probe('HARDWARE_UNAVAILABLE', lambda:collect_hardware(old_hardware), {})
+    return {'schema_version':1,'collector_version':'0.4.0','generated_at':utcnow().isoformat(),'data':data,'errors':errors}
 
 def publish(payload):
     parent = OUTPUT.parent

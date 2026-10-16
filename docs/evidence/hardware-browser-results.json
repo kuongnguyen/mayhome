@@ -1,0 +1,94 @@
+{
+  "data_source": "SYNTHETIC FIXTURES, NOT PRODUCTION",
+  "checks": [
+    {
+      "scenario": "normal",
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "scenario": "normal",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "scenario": "normal",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "scenario": "normal",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "scenario": "missing_sensor",
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "scenario": "missing_sensor",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "scenario": "missing_sensor",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "scenario": "missing_sensor",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "scenario": "first_sample",
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "scenario": "first_sample",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "scenario": "first_sample",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "scenario": "first_sample",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "scenario": "stale",
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "scenario": "stale",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "scenario": "stale",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "scenario": "stale",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "scenario": "offline_recovery",
+      "status": "PASS"
+    },
+    {
+      "scenario": "backup_separate",
+      "status": "PASS"
+    }
+  ],
+  "javascript_errors": []
+}

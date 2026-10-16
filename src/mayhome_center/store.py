@@ -29,7 +29,7 @@ def load_status(path: str) -> Observation:
             rows = data.get(key, [])
             if not isinstance(rows, list) or len(rows) > 1000 or any(not isinstance(row, dict) for row in rows):
                 raise ValueError('collection shape')
-        for key in ('backup', 'retention', 'host', 'post_boot', 'inventory', 'diagnostics'):
+        for key in ('backup', 'retention', 'host', 'post_boot', 'inventory', 'diagnostics', 'hardware'):
             if not isinstance(data.get(key, {}), dict):
                 raise ValueError('object shape')
         if any(not isinstance(row, dict) or not isinstance(row.get('id'), str) for row in data.get('snapshots', [])):

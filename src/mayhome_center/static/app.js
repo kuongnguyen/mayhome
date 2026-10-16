@@ -17,6 +17,8 @@ function markUnavailable(state = 'UNKNOWN', retry = true) {
     if (badge) { badge.textContent = state; badge.className = 'status ' + state; }
     region.querySelector('span:nth-child(2)').textContent = 'Không thể cập nhật dữ liệu — đang thử kết nối lại';
   }
+  document.querySelectorAll('[data-hardware-value]').forEach(value => { value.textContent = '—'; });
+  document.querySelectorAll('.hardware-chart').forEach(chart => { chart.classList.add('historical'); });
   const tunnel = document.querySelector('#tunnel-status');
   if (tunnel) { tunnel.textContent = state; tunnel.className = 'status ' + state; }
   document.querySelectorAll('[data-tunnel-status]').forEach(badge => { badge.textContent = state; badge.className = 'status ' + state; });
