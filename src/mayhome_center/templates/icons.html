@@ -1,0 +1,14 @@
+{% macro icon(name) -%}
+<svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+{% if name == 'overview' %}<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>
+{% elif name == 'backup' %}<path d="M4 8h16v12H4zM3 4h18v4H3zM9 12h6"/>
+{% elif name == 'logs' %}<path d="M6 3h9l4 4v14H6zM14 3v5h5M9 12h7M9 16h7"/>
+{% elif name == 'settings' %}<path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3"/><circle cx="16" cy="17" r="3"/>
+{% elif name == 'shield' %}<path d="M12 3 4 6v6c0 5 8 9 8 9s8-4 8-9V6zM8 12l3 3 5-6"/>
+{% elif name == 'clock' %}<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+{% elif name == 'refresh' %}<path d="M20 7v5h-5M4 17v-5h5M6 6a8 8 0 0 1 13 2M5 16a8 8 0 0 0 13 2"/>
+{% elif name == 'disk' %}<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 14h18M7 17h.01M11 17h.01"/>
+{% elif name == 'server' %}<rect x="4" y="3" width="16" height="8" rx="2"/><rect x="4" y="13" width="16" height="8" rx="2"/><path d="M8 7h.01M8 17h.01M13 7h3M13 17h3"/>
+{% else %}<path d="M3 12h4l3-7 4 14 3-7h4"/>{% endif %}
+</svg>
+{%- endmacro %}

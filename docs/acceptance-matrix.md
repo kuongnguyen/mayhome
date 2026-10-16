@@ -90,3 +90,7 @@ Hai mount đúng UUID/RW; Mount Guard, backup và watchdog timers active/enabled
 Cloud: 150 pytest cases, 15 Chromium Backup Manager scenarios and 24 existing connector scenarios passed; fixtures are synthetic, including container Running/Edge disconnected. Evidence: `evidence/pytest-phase2-results.txt`, `evidence/backup-manager-browser-results.json`, `evidence/post-boot-phase2-regression.json`. New snapshot screenshots are labeled GIẢ LẬP.
 
 History correlation, metadata structure/manifest grammar, unknown/stale handling and MHC-only upgrade/rollback have automated coverage. Upgrade tests simulate systemctl/pip; they do not establish successful production upgrade. Operator previously verified 0.1.0 web/auth/collector and dual HEALTHY4 on mayhome; 0.2.0 host install, resource measurements, actual journal grammar, natural 02:00 backup, reboot, checksum, retention and restore acceptance remain pending. See `backup-manager-phase2.md`.
+
+## Review 0.3.0 — PiCC design
+
+Design reference: PiCC `535af154cab4b5425b72537decd65cd1dc27d1a4`. MAYHOME layout/theme/navigation/login updated; source in PiCC unchanged. Cloud validation: 150 pytest cases and 77 browser cases (15 backup, 24 tunnel, 38 design/theme/navigation), zero JavaScript errors. Evidence and target upgrade guide: [PiCC design](picc-design.md). Screenshots use isolated synthetic data. 0.3.0 target upgrade and runtime acceptance remain pending.

@@ -1,0 +1,78 @@
+{
+  "data_source": "SYNTHETIC FIXTURES, NOT PRODUCTION",
+  "checks": [
+    {
+      "scenario": "normal",
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "scenario": "normal",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "scenario": "normal",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "scenario": "normal",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "scenario": "missing",
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "scenario": "missing",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "scenario": "missing",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "scenario": "missing",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "scenario": "stale",
+      "width": 360,
+      "overflow": false
+    },
+    {
+      "scenario": "stale",
+      "width": 390,
+      "overflow": false
+    },
+    {
+      "scenario": "stale",
+      "width": 768,
+      "overflow": false
+    },
+    {
+      "scenario": "stale",
+      "width": 1440,
+      "overflow": false
+    },
+    {
+      "scenario": "offline_recovery",
+      "status": "PASS"
+    },
+    {
+      "scenario": "stale_while_reading_details",
+      "status": "STALE"
+    },
+    {
+      "scenario": "deferred_refresh_after_details_close",
+      "status": "PASS"
+    }
+  ],
+  "javascript_errors": []
+}

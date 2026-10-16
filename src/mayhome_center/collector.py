@@ -230,7 +230,7 @@ def collect():
                      'note':'Chính sách 14 ngày từ manifest; chưa xác minh cấu hình thực tế.'}}
     from .backup_diagnostics import diagnostics
     data['diagnostics'] = diagnostics(data)
-    return {'schema_version':1,'collector_version':'0.2.1','generated_at':utcnow().isoformat(),'data':data,'errors':errors}
+    return {'schema_version':1,'collector_version':'0.3.0','generated_at':utcnow().isoformat(),'data':data,'errors':errors}
 
 def publish(payload):
     parent = OUTPUT.parent

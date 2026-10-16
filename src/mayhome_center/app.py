@@ -40,7 +40,7 @@ def create_app(config=None):
             return str(value)
     @app.context_processor
     def release_version():
-        return {'mhc_version':'0.2.1'}
+        return {'mhc_version':'0.3.0'}
     attempts = OrderedDict()
 
     @app.before_request

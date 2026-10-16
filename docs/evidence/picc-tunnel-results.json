@@ -1,0 +1,143 @@
+{
+  "data_source": "SYNTHETIC FIXTURES, NOT PRODUCTION",
+  "checks": [
+    {
+      "scenario": "WARNING",
+      "width": 360,
+      "api_status": "WARNING",
+      "overflow": false
+    },
+    {
+      "scenario": "WARNING",
+      "width": 390,
+      "api_status": "WARNING",
+      "overflow": false
+    },
+    {
+      "scenario": "WARNING",
+      "width": 768,
+      "api_status": "WARNING",
+      "overflow": false
+    },
+    {
+      "scenario": "WARNING",
+      "width": 1440,
+      "api_status": "WARNING",
+      "overflow": false
+    },
+    {
+      "scenario": "CRITICAL",
+      "width": 360,
+      "api_status": "CRITICAL",
+      "overflow": false
+    },
+    {
+      "scenario": "CRITICAL",
+      "width": 390,
+      "api_status": "CRITICAL",
+      "overflow": false
+    },
+    {
+      "scenario": "CRITICAL",
+      "width": 768,
+      "api_status": "CRITICAL",
+      "overflow": false
+    },
+    {
+      "scenario": "CRITICAL",
+      "width": 1440,
+      "api_status": "CRITICAL",
+      "overflow": false
+    },
+    {
+      "scenario": "HEALTHY",
+      "width": 360,
+      "api_status": "HEALTHY",
+      "overflow": false
+    },
+    {
+      "scenario": "HEALTHY",
+      "width": 390,
+      "api_status": "HEALTHY",
+      "overflow": false
+    },
+    {
+      "scenario": "HEALTHY",
+      "width": 768,
+      "api_status": "HEALTHY",
+      "overflow": false
+    },
+    {
+      "scenario": "HEALTHY",
+      "width": 1440,
+      "api_status": "HEALTHY",
+      "overflow": false
+    },
+    {
+      "scenario": "STALE",
+      "width": 360,
+      "api_status": "STALE",
+      "overflow": false
+    },
+    {
+      "scenario": "STALE",
+      "width": 390,
+      "api_status": "STALE",
+      "overflow": false
+    },
+    {
+      "scenario": "STALE",
+      "width": 768,
+      "api_status": "STALE",
+      "overflow": false
+    },
+    {
+      "scenario": "STALE",
+      "width": 1440,
+      "api_status": "STALE",
+      "overflow": false
+    },
+    {
+      "scenario": "PARTIAL",
+      "width": 360,
+      "api_status": "UNKNOWN",
+      "overflow": false
+    },
+    {
+      "scenario": "PARTIAL",
+      "width": 390,
+      "api_status": "UNKNOWN",
+      "overflow": false
+    },
+    {
+      "scenario": "PARTIAL",
+      "width": 768,
+      "api_status": "UNKNOWN",
+      "overflow": false
+    },
+    {
+      "scenario": "PARTIAL",
+      "width": 1440,
+      "api_status": "UNKNOWN",
+      "overflow": false
+    },
+    {
+      "scenario": "network_failure",
+      "display": "UNKNOWN",
+      "tunnel_display": "UNKNOWN"
+    },
+    {
+      "scenario": "network_recovered",
+      "tunnel_display": "HEALTHY"
+    },
+    {
+      "scenario": "browser_offline",
+      "tunnel_display": "UNKNOWN"
+    },
+    {
+      "scenario": "browser_online",
+      "tunnel_display": "HEALTHY"
+    }
+  ],
+  "javascript_errors": []
+}

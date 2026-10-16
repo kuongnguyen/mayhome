@@ -2,7 +2,7 @@
 
 Ứng dụng giám sát tài nguyên máy chủ, ưu tiên **Nextcloud Backup Manager** theo [manifest RC1](docs/MANIFEST.md). Python 3.12+, Flask, Jinja, Gunicorn; không cần Node hoặc database.
 
-**Trạng thái: 0.2.1 sửa bố cục đang review; operator đã mở được 0.2.0 trên mayhome.** Chưa nghiệm thu đầy đủ RC1 production. Cloud không có kết nối trực tiếp tới mayhome; bằng chứng host do operator cung cấp. Xem [phạm vi mới và hướng dẫn nâng cấp có rollback](docs/backup-manager-phase2.md).
+**Trạng thái: 0.3.0 đang review với [giao diện theo PiCC](docs/picc-design.md).** Operator đã mở được 0.2.0 trên mayhome; chưa nghiệm thu đầy đủ RC1 production. Cloud không có kết nối trực tiếp tới mayhome. Xem [hướng dẫn nâng cấp có rollback](docs/backup-manager-phase2.md).
 
 ## Chạy trong môi trường phát triển
 
