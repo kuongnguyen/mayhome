@@ -84,3 +84,9 @@ Network cuongnh_nextcloud-net được operator xác minh Subnet=172.18.0.0/16, 
 ## Audit an toàn do operator cung cấp — 2026-10-16
 
 Hai mount đúng UUID/RW; Mount Guard, backup và watchdog timers active/enabled; app/cron/DB Running; Nextcloud 35.0.1.1 maintenance=false, needsDbUpgrade=false; recovery marker không có trong parent tồn tại root:root 0700. Bằng chứng nằm evidence/operator-host-safety-observation.json. Không đánh dấu full Stage 0 hoặc deployment PASS: chưa có baseline/checkpoint/script review/hash/schedules/retention/integrity và runtime ứng dụng.
+
+## Review 0.2.0 — Backup Manager
+
+Cloud: 150 pytest cases, 15 Chromium Backup Manager scenarios and 24 existing connector scenarios passed; fixtures are synthetic, including container Running/Edge disconnected. Evidence: `evidence/pytest-phase2-results.txt`, `evidence/backup-manager-browser-results.json`, `evidence/post-boot-phase2-regression.json`. New snapshot screenshots are labeled GIẢ LẬP.
+
+History correlation, metadata structure/manifest grammar, unknown/stale handling and MHC-only upgrade/rollback have automated coverage. Upgrade tests simulate systemctl/pip; they do not establish successful production upgrade. Operator previously verified 0.1.0 web/auth/collector and dual HEALTHY4 on mayhome; 0.2.0 host install, resource measurements, actual journal grammar, natural 02:00 backup, reboot, checksum, retention and restore acceptance remain pending. See `backup-manager-phase2.md`.

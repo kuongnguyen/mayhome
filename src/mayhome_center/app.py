@@ -8,6 +8,7 @@ from flask import Flask, abort, jsonify, redirect, render_template, request, ses
 from .domain import MODULES, SNAPSHOT_PATTERN, protection, utcnow
 from .store import load_status
 from .post_boot import display_status, present_monitor
+from .backup_diagnostics import present_diagnostics
 
 def create_app(config=None):
     app = Flask(__name__)
@@ -24,6 +25,22 @@ def create_app(config=None):
         app.config.update(config)
     if app.config['AUTH_TOKEN'] and not (config and config.get('SECRET_KEY')) and not os.environ.get('MHC_SESSION_KEY'):
         raise RuntimeError('MHC_SESSION_KEY is required when authentication is configured')
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+    @app.template_filter('event_time')
+    def event_time(value):
+        if not value:
+            return 'Chưa rõ'
+        try:
+            date = datetime.fromisoformat(value)
+            if date.tzinfo is None:
+                return str(value)
+            return date.astimezone(ZoneInfo('Asia/Ho_Chi_Minh')).strftime('%d/%m/%Y %H:%M:%S +07')
+        except (ValueError,TypeError):
+            return str(value)
+    @app.context_processor
+    def release_version():
+        return {'mhc_version':'0.2.0'}
     attempts = OrderedDict()
 
     @app.before_request
@@ -112,7 +129,7 @@ def create_app(config=None):
         if resource == "capabilities":
             return envelope({"modules": [m["id"] for m in MODULES], "read_only": True, "post_boot_monitor": True,
                 "run_backup": False, "restore": False, "delete": False, "retention_apply": False}, observed)
-        allowed = {"overview", "host/post-boot", "backups/status", "backups/jobs", "backups/snapshots", "backups/retention", "backups/storage", "logs"}
+        allowed = {"overview", "host/post-boot", "backups/inventory", "backups/diagnostics", "backups/status", "backups/jobs", "backups/snapshots", "backups/retention", "backups/storage", "logs"}
         detail = re.fullmatch(r"backups/snapshots/(" + SNAPSHOT_PATTERN + r")", resource)
         if resource not in allowed and not detail:
             abort(404)
@@ -121,15 +138,17 @@ def create_app(config=None):
         if resource == "host/post-boot":
             return envelope(present_monitor(data.get("post_boot", {}), observed.freshness), observed)
         if resource == "overview":
-            return envelope({**data, "post_boot": present_monitor(data.get("post_boot", {}), observed.freshness), "status": protection(data, observed.freshness), "server_timestamp": utcnow().isoformat()}, observed)
+            return envelope({**data, "post_boot": present_monitor(data.get("post_boot", {}), observed.freshness), "diagnostics":present_diagnostics(data.get("diagnostics",{}),observed.freshness), "status": protection(data, observed.freshness), "server_timestamp": utcnow().isoformat()}, observed)
         if detail:
             item = next((x for x in data.get("snapshots", []) if x["id"] == detail[1]), None)
             if item is None:
                 abort(404)
             return envelope(item, observed)
-        field = {"backups/status": "backup", "backups/retention": "retention", "backups/storage": "storage",
+        field = {"backups/inventory":"inventory", "backups/diagnostics":"diagnostics", "backups/status": "backup", "backups/retention": "retention", "backups/storage": "storage",
             "backups/jobs": "jobs", "backups/snapshots": "snapshots", "logs": "logs"}[resource]
         result = data.get(field, [] if field in ("jobs", "snapshots", "storage", "logs") else {})
+        if field == "diagnostics":
+            result = present_diagnostics(result, observed.freshness)
         if field in ("jobs", "snapshots", "logs"):
             try:
                 limit = int(request.args.get("limit", 20))

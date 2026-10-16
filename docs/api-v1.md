@@ -8,6 +8,8 @@ Mọi endpoint dữ liệu yêu cầu session từ form `/login` (CSRF + khóa t
 | /readyz | Collector fresh, 503 khi missing/stale |
 | /api/v1/overview | Host, backup, inventory, storage, containers, jobs, logs, alerts/status |
 | /api/v1/backups/status | Engine, timer, marker, maintenance, services |
+| /api/v1/backups/inventory | Thời điểm inventory riêng, số complete/staging hoặc unknown |
+| /api/v1/backups/diagnostics | Từng kiểm tra bằng chứng; stale override trạng thái |
 | /api/v1/backups/jobs | items + next_cursor |
 | /api/v1/backups/snapshots | items + next_cursor |
 | /api/v1/backups/snapshots/{id} | Metadata theo ID hợp lệ, 404 nếu không có |
@@ -25,3 +27,5 @@ Phân trang limit 1..200 mặc định 20, cursor offset 0..10000. Offset chỉ 
 GET /api/v1/host/post-boot và overview.data.post_boot trả {status, code, observed_at, connectors:{systemd:{...},docker:{...}}, scope, public_route_verified:false}. Mỗi connector có status/code/observed_at/boot_id/uptime_sec/grace_seconds/ready_http_status/edge_connections; systemd có active_state, Docker có running/address/network_cidr/container_name/network_name. Chỉ phát các fields đã chọn, không raw inspect/metrics/container ID/token.
 
 Status tổng CRITICAL > UNKNOWN > WARNING > HEALTHY. STALE override tổng và từng connector khi collector quá TTL; liveness/readiness web không chứng minh public route. Auth/GET-only/pagination/error contract khác giữ nguyên. [Chi tiết probe và opt-in](post-boot-monitor.md), [hồ sơ review triển khai](review-dual-connectors.md).
+
+Backup Manager 0.2.0: jobs có mức tin cậy phiên và thời lượng chỉ khi ghép được START/finish hợp lệ. Snapshot detail có structure_checks và bằng chứng định dạng manifest; không xác minh hash SQL/restore. Xem [giới hạn và nâng cấp](backup-manager-phase2.md).

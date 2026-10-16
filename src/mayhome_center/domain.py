@@ -40,11 +40,13 @@ def protection(data: dict, freshness: str) -> Status:
     if any(m.get("status") == "CRITICAL" for m in mounts):
         return "CRITICAL"
     backup = data.get("backup", {})
-    if backup.get("result") == "failed" or backup.get("marker_present") is True:
+    if backup.get("result") == "failed" or ((backup.get("marker_present") is True or backup.get("maintenance") is True) and backup.get("active_state") != "active"):
         return "CRITICAL"
     containers = data.get("containers", [])
     if any(c.get("running") is False for c in containers):
         return "CRITICAL"
+    if data.get('diagnostics', {}).get('critical_count', 0) > 0:
+        return 'CRITICAL'
     if backup.get("active_state") == "active":
         return "RUNNING"
     # RC1 must not infer health without maintenance, history, policy and guard evidence.

@@ -2,7 +2,7 @@
 
 Ứng dụng giám sát tài nguyên máy chủ, ưu tiên **Nextcloud Backup Manager** theo [manifest RC1](docs/MANIFEST.md). Python 3.12+, Flask, Jinja, Gunicorn; không cần Node hoặc database.
 
-**Trạng thái: bản triển khai phát triển 0.1.0, chưa nghiệm thu RC1 production.** Không có kết nối tới máy `mayhome` trong phiên triển khai này. Các giá trị từ manifest là yêu cầu dự kiến, không phải trạng thái live.
+**Trạng thái: 0.2.0 đang review; 0.1.0 đã được operator cài và kiểm tra trên mayhome.** Chưa nghiệm thu đầy đủ RC1 production. Cloud không có kết nối trực tiếp tới mayhome; bằng chứng host do operator cung cấp. Xem [phạm vi mới và hướng dẫn nâng cấp có rollback](docs/backup-manager-phase2.md).
 
 ## Chạy trong môi trường phát triển
 
@@ -31,11 +31,11 @@ Nếu chưa có collector JSON hợp lệ, ứng dụng hiển thị `UNKNOWN`, 
 
 ## Phần còn chờ nguồn dữ liệu thật và nghiệm thu
 
-- Stage 0 trên máy thật, xác minh schema log/script RC1.3, quyền collector và host namespace.
-- Maintenance, Backup Guard, elapsed/stage tin cậy, thời lượng/lịch sử đầy đủ sau reboot, retention audit và bằng chứng checksum còn UNKNOWN. Chưa có timeline 14–30 ngày hoặc bộ dịch Anh đầy đủ.
-- Chưa profile collector/disk I/O trên host; inventory hiện quét metadata tối đa 1.000 entry mỗi lần thu thập, cần điều chỉnh cadence sau đo thực tế.
-- Chưa audit quyền bảo mật độc lập, đo coverage 95%, kiểm tra AA toàn diện, runtime 15 phút trên host, backup 02:00, restore test hay kiểm chứng Cloudflare Access.
-- Chưa cài/enabled service, thay DNS/tunnel, tạo tag RC1 freeze hoặc merge.
+- Đối chiếu grammar journal/script RC1.3 trên máy thật; lịch sử thiếu bằng chứng không có thời lượng suy đoán.
+- Maintenance chỉ có khi bật nguồn `occ status` tùy chọn; checksum, retention và restore vẫn cần bằng chứng độc lập.
+- Inventory metadata giới hạn 500 entry/2 giây, cache riêng tối đa 180 giây; chưa profile I/O và thời gian collector trên host.
+- Chưa audit bảo mật độc lập, đo coverage 95%, kiểm tra AA toàn diện, theo dõi 15 phút và lượt backup 02:00 hoặc reboot thật.
+- 0.2.0 chưa triển khai trên mayhome; chưa tag RC1 freeze hay merge.
 
 Không có nút chạy backup, xóa, restore, retention apply, thay timer hay điều khiển Docker.
 
@@ -45,7 +45,7 @@ Xem [kiến trúc](docs/architecture.md), [vận hành](docs/ops-runbook.md), [A
 
 Operator có thể chạy [audit Python độc lập](docs/run-audit-on-mayhome.md) rồi gửi báo cáo JSON. Build bằng `python3 scripts/build_audit_bundle.py`; artifacts gồm `.pyz` và checksum, không cần cài dependencies trên host. Audit không tự cấp quyền triển khai hay thay đổi production.
 
-Hồ sơ review mới: [dual connector monitoring và hướng dẫn cài đặt](docs/review-dual-connectors.md). Bản review dùng nhánh `review/mhc-dual-connectors`; chưa merge hay deploy lên mayhome.
+Hồ sơ review mới: [dual connector monitoring và hướng dẫn cài đặt](docs/review-dual-connectors.md). Bản review dùng nhánh `review/mhc-dual-connectors`. 0.1.0 đã được operator triển khai; dùng [hướng dẫn nâng cấp](docs/backup-manager-phase2.md) cho 0.2.0.
 
 
 ## Lấy bản review từ GitHub

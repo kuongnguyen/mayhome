@@ -1,0 +1,4 @@
+# REVIEW ONLY. Not installed automatically; fixed read-only Docker exec/occ status.
+# Operator has validated this command on nextcloud-app as www-data.
+[Service]
+Environment=MHC_NEXTCLOUD_STATUS=1
