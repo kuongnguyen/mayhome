@@ -1,2 +1,46 @@
 {% from 'icons.html' import icon %}
-<!doctype html><html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Đăng nhập · MAYHOME CENTER</title><link rel="stylesheet" href="/static/app.css"><body class="login"><main class="login-card"><span class="login-mark">{{ icon('server') }}</span><span class="eyebrow">MAYHOME CONTROL CENTER</span><h1>Chào mừng trở lại.</h1><p>Đăng nhập để theo dõi máy chủ và bản sao lưu của bạn.</p><form method="post"><input type="hidden" name="csrf" value="{{ session.csrf }}"><label for="token">Khóa truy cập</label><input id="token" name="token" type="password" autocomplete="current-password" required maxlength="256"><button>Đăng nhập →</button></form>{% if error %}<p role="alert" class="error">{{ error }}</p>{% endif %}{% if config.PASSKEY_ENABLED %}<div id="passkeys" data-csrf="{{ session.csrf }}"></div><button id="login-passkey" type="button">Đăng nhập bằng passkey</button><p id="passkey-message" role="status"></p><script src="/static/passkeys.js" defer></script>{% endif %}<small>RC1 · Giám sát chỉ đọc</small></main></body></html>
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f9fb">
+  <title>Đăng nhập · MAYHOME CENTER</title>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body class="auth-page">
+  <main class="auth-layout">
+    <section class="auth-card" aria-labelledby="login-title">
+      <a class="auth-brand" href="/" aria-label="MAYHOME CENTER">
+        <span class="login-mark">{{ icon('server') }}</span>
+        <span><strong>MAYHOME</strong><small>Control Center</small></span>
+      </a>
+      <div class="auth-intro">
+        <span class="eyebrow">SECURE ACCESS</span>
+        <h1 id="login-title">Chào mừng trở lại.</h1>
+        <p>Đăng nhập để theo dõi máy chủ và bản sao lưu của bạn.</p>
+      </div>
+      {% if config.PASSKEY_ENABLED %}
+      <div class="auth-passkey-block">
+        <div class="auth-option-icon" aria-hidden="true">{{ icon('shield') }}</div>
+        <div><strong>Đăng nhập an toàn bằng Passkey</strong><p>Dùng khóa bảo mật hoặc xác thực trên thiết bị của bạn.</p></div>
+        <div id="passkeys" data-csrf="{{ session.csrf }}"></div>
+        <button id="login-passkey" class="auth-primary" type="button">{{ icon('key') }} Đăng nhập bằng Passkey</button>
+        <p id="passkey-message" class="auth-message" role="status" aria-live="polite"></p>
+      </div>
+      <div class="auth-divider"><span>hoặc dùng phương thức dự phòng</span></div>
+      {% endif %}
+      <form class="auth-fallback" method="post">
+        <input type="hidden" name="csrf" value="{{ session.csrf }}">
+        <label for="token">Khóa truy cập dự phòng</label>
+        <input id="token" name="token" type="password" autocomplete="current-password" required maxlength="256" placeholder="Nhập khóa truy cập">
+        <button class="auth-secondary" type="submit">Đăng nhập bằng khóa truy cập</button>
+      </form>
+      {% if error %}<p role="alert" class="error auth-error">{{ error }}</p>{% endif %}
+      <div class="auth-footer"><span>{{ icon('shield') }} Kết nối bảo mật</span><span>RC1 · Giám sát chỉ đọc</span></div>
+    </section>
+    <p class="auth-caption">MAYHOME CENTER <span>·</span> Quản lý máy chủ tại nhà</p>
+  </main>
+  {% if config.PASSKEY_ENABLED %}<script src="/static/passkeys.js" defer></script>{% endif %}
+</body>
+</html>
