@@ -11,3 +11,11 @@ pluggy==1.7.0
 Pygments==2.21.0
 pytest==8.4.2
 Werkzeug==3.1.9
+asn1crypto==1.5.1
+cbor2==6.1.5
+cffi==2.1.1
+cryptography==50.0.2
+pycparser==3.11
+pyOpenSSL==26.4.0
+typing_extensions==4.16.0
+webauthn==2.7.0

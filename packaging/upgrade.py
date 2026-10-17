@@ -66,6 +66,7 @@ def prepare(source):
     python = str(destination/'.venv/bin/python')
     checked([python,'-m','pip','install','-r',str(destination/'requirements.lock')])
     checked([python,'-m','pip','install','--no-deps',str(destination)])
+    checked([python,'-m','pip','check'])
     checked([python,'-I','-c',
              "import sqlite3; c=sqlite3.connect(':memory:'); assert c.execute('select 1').fetchone() == (1,); c.close(); from mayhome_center import create_app; a=create_app({'AUTH_TOKEN':''}); assert a.test_client().get('/healthz').json == {'alive':True}"])
     clean_source(source)

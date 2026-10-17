@@ -134,5 +134,18 @@ def test_prepare_stages_release_without_stopping_current(tree,monkeypatch,pip_fa
         assert json.loads((release/'READY.json').read_text())['sha']==SHA
         assert (release/'src/mayhome_center/snapshot_metadata.py').is_file()
         assert any('-I' in command for command in commands)
+        assert any(command[1:]==['-m','pip','check'] for command in commands)
     assert not current.is_symlink() and (current/'previous-source').read_text()=='old'
     assert secret.read_text()=='DO NOT CHANGE' and not calls
+
+def test_release_lock_covers_declared_runtime_dependencies():
+    import tomllib
+    from packaging.requirements import Requirement
+    from packaging.utils import canonicalize_name
+    source=Path(__file__).resolve().parents[1]
+    project=tomllib.loads((source/'pyproject.toml').read_text())
+    locked={canonicalize_name(req.name):req for line in (source/'requirements.lock').read_text().splitlines()
+            if line.strip() and not line.startswith('#') for req in [Requirement(line)]}
+    for text in project['project']['dependencies']:
+        requirement=Requirement(text)
+        assert str(locked[canonicalize_name(requirement.name)].specifier)==str(requirement.specifier)
