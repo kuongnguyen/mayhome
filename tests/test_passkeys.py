@@ -95,3 +95,31 @@ def test_real_registration_login_and_replay(client, failure):
     assert client.get('/admin').status_code==200
     assert client.post('/auth/passkeys/revoke',headers=h,json={'token':'owner-token','id':enc(credential_id)}).status_code==200
     assert client.get('/admin').status_code==401
+
+
+def test_passkey_pages_render_shared_design_and_preserve_controls(client):
+    login = client.get('/login')
+    assert login.status_code == 200
+    assert b'auth-card' in login.data
+    assert b'login-passkey' in login.data
+    assert b'name="csrf"' in login.data
+    assert b'name="token"' in login.data
+
+    headers(client, True)
+    admin = client.get('/admin')
+    assert admin.status_code == 200
+    for marker in (b'class="sidebar"', b'class="workspace"', b'class="breadcrumbs"',
+                   b'aria-current="page"', b'id="passkey-label"',
+                   b'id="admin-token"', b'id="register-passkey"',
+                   b'data-revoke=', b'id="logout"', b'data-csrf='):
+        assert marker in admin.data
+
+
+def test_passkey_styles_include_responsive_access_layout(client):
+    response = client.get('/static/app.css')
+    assert response.status_code == 200
+    css = response.get_data(as_text=True)
+    for marker in ('.auth-card', '.auth-primary', '.access-credential',
+                   '.access-form-grid', '@media(max-width:700px)',
+                   '@media(max-width:380px)'):
+        assert marker in css
