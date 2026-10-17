@@ -102,3 +102,7 @@ Tổng quan có 6 thẻ phần cứng, chart từ history thật, mẫu đầu/r
 ## Review 0.5.0 — local alerts and persistent history
 
 Code adds fixed read-only maintenance/log evidence, local backup/tunnel/disk alerts and optional MHC-only SQLite history. Validation: 189 pytest cases and 110 browser cases (15 alerts/history, 18 hardware, 15 backup, 24 tunnel, 38 design); synthetic fixtures and temporary databases, no production configuration changed. Tests cover database reopen/reboot state, clock changes, full-month bounded queries, retention, quota, low disk, locks, auth and refusal to overwrite custom observer settings. [Sources, limits and activation](alerts-history-maintenance.md). Native maintenance/log grammar evidence, observer enablement, disk overhead and reboot acceptance on mayhome remain pending.
+
+## Review MHC Verifier 0.1.0 — độc lập với ứng dụng 0.5.0
+
+35 verifier tests and 224 total pytest cases pass. Checks cover streamed SHA256/gzip, CRC/truncation/multi-member/trailing data, rate/byte/time/member limits, no-SQL-read plan/projection, symlink/ownership/source-change/path-swap handling, engine guard interruption, own lock, retention boundary/protected/staging/unknown entry behavior and explicit CLI execution flag. Standalone stdlib archive/help and checksum validated. No production hash or retention producer execution; native mayhome permissions, plan, resource use and actual integrity remain pending. See [operator review/runbook](verifier.md), evidence `evidence/verifier-pytest-results.txt`.

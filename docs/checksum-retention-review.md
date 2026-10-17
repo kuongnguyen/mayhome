@@ -77,3 +77,7 @@ Nếu retention script không tồn tại, ghi nhận không có, không tự c�
 SHA khớp/lệch, gzip cắt cụt/CRC lỗi/multi-member/trailing data, manifest quá lớn/traversal/nhiều target, symlink ở từng cấp, file đổi trong lúc đọc, engine bắt đầu chạy, read/expanded/time budget, nguồn thiếu/permission và báo cáo stale. Retention cần test biên14ngày/múi giờ/tên sai/ngày tương lai, baseline/fixed/latest2, staging và inventory không đầy đủ. Fixtures chỉ dùng dữ liệu tổng hợp nhỏ, không dùng SQL thật.
 
 **Trạng thái cuối review:** metadata PASS đúng phạm vi; verifier thực chưa có; retention producer chưa được review; chưa cho phép chạy hash SQL hoặc retention script trên mayhome từ hồ sơ này.
+
+## Cập nhật: verifier độc lập đã được chuẩn bị
+
+Hồ sơ trên mô tả mã tại commit8c3548f. Sau đó [MHC Verifier0.1.0](verifier.md) được bổ sung và kiểm thử bằng dữ liệu giả lập, tách khỏi collector/web. Việc có mã mới không đồng nghĩa đã xác minh checksum hoặc retention trên mayhome. Source/operator guard đã nhận trong chat và hồ sơ review riêng vẫn không được đưa vào Git; công cụ mới không gọi các script producer đó.
