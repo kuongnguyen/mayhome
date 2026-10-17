@@ -66,3 +66,5 @@ Nếu thư mục đã tồn tại, giữ nguyên và kiểm tra trước; không
 ## Verifier độc lập — review trước khi chạy
 
 [MHC Verifier 0.1.0](docs/verifier.md) có plan metadata, SHA256+gzip một checkpoint với budget, và retention projection không xóa. Bundle stdlib xây bằng `python3 scripts/build_verifier_bundle.py`. Không cần nâng cấp/restart web, không gọi script retention của engine. Chưa chạy hash trên mayhome; xem hướng dẫn plan trước. Báo cáo PASS của verifier chưa tự thay đổi các cảnh báo trong dashboard.
+
+Owner administration and optional passkeys: [review and installation](docs/admin-passkeys.md).

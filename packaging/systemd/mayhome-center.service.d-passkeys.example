@@ -1,0 +1,6 @@
+# Install as /etc/systemd/system/mayhome-center.service.d/passkeys.conf
+[Service]
+StateDirectory=mayhome-center-auth
+StateDirectoryMode=0700
+ReadWritePaths=/var/lib/mayhome-center-auth
+Environment=MHC_PASSKEY_ENABLED=1

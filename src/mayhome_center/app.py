@@ -21,7 +21,10 @@ def create_app(config=None):
         TRUSTED_HOSTS=["localhost", "127.0.0.1", "mayhome.cuong.win"],
         SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_SAMESITE="Strict",
         SESSION_COOKIE_SECURE=os.environ.get("MHC_COOKIE_SECURE", "1") != "0",
-        MAX_CONTENT_LENGTH=4096, PERMANENT_SESSION_LIFETIME=1800,
+        PASSKEY_ENABLED=os.environ.get("MHC_PASSKEY_ENABLED", "0") == "1",
+        AUTH_DB="/var/lib/mayhome-center-auth/auth.sqlite3",
+        PASSKEY_RP_ID="mayhome.cuong.win", PASSKEY_ORIGIN="https://mayhome.cuong.win",
+        MAX_CONTENT_LENGTH=16384, PERMANENT_SESSION_LIFETIME=1800,
     )
     if config:
         app.config.update(config)
@@ -51,7 +54,7 @@ def create_app(config=None):
             raise request.routing_exception
         if request.path == "/healthz":
             return None
-        if request.path == "/login":
+        if request.path == "/login" or request.path.startswith("/auth/"):
             return None
         if request.path.startswith("/static/"):
             return None
@@ -61,6 +64,8 @@ def create_app(config=None):
             if request.path.startswith("/api/") or request.path == "/readyz":
                 return jsonify(error="AUTH_REQUIRED"), 401
             return redirect(url_for("login"))
+        if app.config["PASSKEY_ENABLED"]:
+            app.extensions["passkey_owner_check"]()
         if request.method not in ("GET", "HEAD", "OPTIONS"):
             abort(405)
 
@@ -93,6 +98,7 @@ def create_app(config=None):
             if valid_csrf and token and hmac.compare_digest(request.form.get("token", "").encode(), token.encode()):
                 session.clear()
                 session["authenticated"] = True
+                session["csrf"] = secrets.token_urlsafe(32)
                 session.permanent = True
                 attempts.pop(key, None)
                 return redirect("/")
@@ -209,4 +215,6 @@ def create_app(config=None):
             next_cursor = cursor + limit if cursor + limit < len(result) else None
             result = {"items": result[cursor:cursor + limit], "next_cursor": next_cursor}
         return envelope(result, observed)
+    from .passkeys import install
+    install(app)
     return app
