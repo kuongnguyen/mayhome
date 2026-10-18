@@ -41,7 +41,7 @@ def test_probe_bounded_fixed_no_redirect_no_secrets(monkeypatch):
     monkeypatch.setattr(post_boot,'boot_context',lambda:(900,'boot-one'))
     calls=[]
     def fake(argv,**limits):
-        if argv[0].endswith('systemctl'): return 'ActiveState=active\nMainPID=4029'
+        if argv[0].endswith('systemctl'): return 'ActiveState=active\nMainPID=12345'
         calls.append((argv,limits))
         return '503' if argv[-1].endswith('/ready') else 'cloudflared_tunnel_ha_connections 0\n# SECRET=private\n200'
     data=post_boot.collect_systemd(fake,enabled=True)
@@ -111,8 +111,15 @@ def test_real_http_probe_with_simulated_cloudflared(monkeypatch):
             else:
                 self.send_response(404);self.end_headers()
         def log_message(self,*args):pass
-    server=HTTPServer(('127.0.0.1',20241),Handler)
+    server=HTTPServer(('127.0.0.1',0),Handler)
+    probe_url=f'http://127.0.0.1:{server.server_port}'
     thread=Thread(target=server.serve_forever,daemon=True);thread.start()
+    original_probe_endpoint=post_boot.probe_endpoint
+    def probe_test_endpoint(run_command, endpoint, result):
+        if endpoint == 'http://127.0.0.1:20241':
+            endpoint = probe_url
+        return original_probe_endpoint(run_command, endpoint, result)
+    monkeypatch.setattr(post_boot,'probe_endpoint',probe_test_endpoint)
     monkeypatch.setattr(post_boot,'boot_context',lambda:(900,'test-boot'))
     def fixture_run(argv, **kwargs):
         if argv[0].endswith('systemctl'): return 'ActiveState=active\nMainPID=4029'

@@ -1,1 +1,83 @@
-<!doctype html><html lang="vi"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Admin · MAYHOME</title><link rel="stylesheet" href="/static/app.css"><body class="login"><main class="login-card"><h1>Quản trị truy cập</h1><p><a href="/">← Tổng quan</a></p><p>Tài khoản chủ máy · Quản lý passkey. Khóa truy cập vẫn dùng để dự phòng.</p><div id="passkeys" data-csrf="{{ session.csrf }}"></div>{% if enabled %}<label for="admin-token">Xác thực lại bằng khóa truy cập</label><input id="admin-token" type="password" autocomplete="current-password" maxlength="256"><label for="passkey-label">Tên thiết bị</label><input id="passkey-label" maxlength="80" value="Thiết bị của tôi"><button id="register-passkey" type="button">Thêm passkey</button><ul>{% for item in credentials %}<li>{{ item.label }} <button type="button" data-revoke="{{ item.id }}">Thu hồi</button></li>{% else %}<li>Chưa có passkey.</li>{% endfor %}</ul>{% else %}<p>Passkey chưa được bật trên máy chủ.</p>{% endif %}<button id="logout" type="button">Đăng xuất</button><p id="passkey-message" role="status"></p><script src="/static/passkeys.js" defer></script></main></body></html>
+{% from 'icons.html' import icon %}
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f9fb">
+  <title>Quản trị truy cập · MAYHOME CENTER</title>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <a class="skip" href="#content">Đến nội dung</a>
+  <aside class="sidebar" aria-label="Điều hướng MAYHOME">
+    <a class="brand" href="/"><span class="brand-mark">{{ icon('server') }}</span><span>MAYHOME<span class="brand-second">Control Center</span></span></a>
+    <div class="host"><i aria-hidden="true"></i><div>mayhome<small>Home server · Nextcloud</small></div></div>
+    <div class="nav-group-label">KHÔNG GIAN LÀM VIỆC</div>
+    <nav aria-label="Điều hướng chính">
+      <a href="/">{{ icon('overview') }}<span>Tổng quan</span></a>
+      <a href="/backups">{{ icon('backup') }}<span>Quản lý backup</span></a>
+      <a href="/logs">{{ icon('logs') }}<span>Nhật ký</span></a>
+      <a href="/about">{{ icon('settings') }}<span>Cấu hình</span></a>
+      <a href="/admin" aria-current="page">{{ icon('shield') }}<span>Quản trị truy cập</span><i class="nav-live" aria-hidden="true"></i></a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="secure-label">{{ icon('shield') }}<span>Giám sát chỉ đọc</span></div>
+      <p>Quản lý truy cập máy chủ an toàn.</p>
+      <div class="sidebar-version"><small>MAYHOME CENTER</small><span>OBSERVER</span></div>
+    </div>
+  </aside>
+  <div class="workspace">
+    <header>
+      <span class="breadcrumbs"><a href="/">mayhome</a> <b>/</b> <span>Quản trị truy cập</span></span>
+      <div class="topbar-right"><span class="readonly">{{ icon('shield') }} Chỉ dành cho chủ máy</span><time id="clock">UTC+07</time></div>
+    </header>
+    <main id="content" class="access-main">
+      <div class="page-heading">
+        <div><span class="eyebrow">MAYHOME / SECURITY</span><h1>Quản trị truy cập</h1><p>Quản lý passkey và phương thức dự phòng cho tài khoản chủ máy.</p></div>
+        <a class="access-back" href="/">{{ icon('overview') }} Về tổng quan</a>
+      </div>
+      <div class="access-summary">
+        <span class="access-summary-icon">{{ icon('shield') }}</span>
+        <div><strong>Bảo vệ quyền truy cập</strong><p>Ưu tiên Passkey. Khóa truy cập vẫn được giữ làm phương thức dự phòng.</p></div>
+        <span class="access-badge">OWNER ACCESS</span>
+      </div>
+      <div id="passkeys" data-csrf="{{ session.csrf }}"></div>
+      {% if enabled %}
+      <section class="panel access-panel" aria-labelledby="registered-title">
+        <div class="panel-heading"><div><span class="eyebrow">CREDENTIALS</span><h2 id="registered-title">Passkey đã đăng ký</h2></div><span class="pill">{{ credentials|length }} THIẾT BỊ</span></div>
+        <div class="access-credential-list">
+          {% for item in credentials %}
+          <article class="access-credential">
+            <span class="credential-icon">{{ icon('key') }}</span>
+            <div class="credential-details"><strong>{{ item.label }}</strong><small>Passkey đã đăng ký trên tài khoản chủ máy</small></div>
+            <span class="credential-state">{{ icon('shield') }} Đã đăng ký</span>
+            <button class="access-revoke" type="button" data-revoke="{{ item.id }}">Thu hồi</button>
+          </article>
+          {% else %}
+          <div class="access-empty"><span class="credential-icon">{{ icon('key') }}</span><div><strong>Chưa có Passkey</strong><p>Thêm Passkey cho thiết bị tin cậy để đăng nhập nhanh và an toàn hơn.</p></div></div>
+          {% endfor %}
+        </div>
+      </section>
+      <section class="panel access-panel" aria-labelledby="add-passkey-title">
+        <div class="panel-heading"><div><span class="eyebrow">ADD DEVICE</span><h2 id="add-passkey-title">Thêm thiết bị mới</h2></div></div>
+        <div class="access-form">
+          <p>Đặt tên dễ nhận biết cho thiết bị. Bạn cần xác thực lại bằng khóa truy cập trước khi đăng ký Passkey.</p>
+          <div class="access-form-grid">
+            <div class="access-field"><label for="passkey-label">Tên thiết bị</label><input id="passkey-label" maxlength="80" value="Thiết bị của tôi" autocomplete="off" placeholder="Ví dụ: Laptop cá nhân"></div>
+            <div class="access-field"><label for="admin-token">Khóa truy cập để xác thực lại</label><input id="admin-token" type="password" autocomplete="current-password" maxlength="256" placeholder="Nhập khóa truy cập"></div>
+          </div>
+          <button id="register-passkey" class="auth-primary access-add-button" type="button">{{ icon('key') }} Đăng ký Passkey</button>
+          <p class="access-help">Chỉ đăng ký trên thiết bị bạn tin cậy. Thu hồi một Passkey sẽ ngăn khóa đó tiếp tục đăng nhập.</p>
+        </div>
+      </section>
+      {% else %}
+      <section class="panel access-panel"><div class="access-disabled"><span class="credential-icon">{{ icon('shield') }}</span><div><h2>Passkey chưa được bật</h2><p>Thiết lập máy chủ hiện chưa cho phép đăng nhập bằng Passkey.</p></div></div></section>
+      {% endif %}
+      <div class="access-actions"><button id="logout" class="access-logout" type="button">{{ icon('logout') }} Đăng xuất</button><p id="passkey-message" class="auth-message" role="status" aria-live="polite"></p></div>
+      <p class="access-footnote">{{ icon('shield') }} MAYHOME CENTER · Các thay đổi quyền truy cập cần được xác thực.</p>
+    </main>
+  </div>
+  <script src="/static/passkeys.js" defer></script>
+</body>
+</html>
