@@ -106,6 +106,16 @@ def test_passkey_pages_render_shared_design_and_preserve_controls(client):
     assert b'name="token"' in login.data
 
     headers(client, True)
+
+    # Seed one synthetic credential for the revoke-control rendering test.
+    import sqlite3
+    with sqlite3.connect(client.application.config['AUTH_DB']) as db:
+        db.execute(
+            'INSERT INTO credentials VALUES (?,?,?,?,?)',
+            ('synthetic-test-credential', 'Synthetic key',
+             b'test-public-key', 0, 1),
+        )
+
     admin = client.get('/admin')
     assert admin.status_code == 200
     for marker in (b'class="sidebar"', b'class="workspace"', b'class="breadcrumbs"',
